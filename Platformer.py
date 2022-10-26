@@ -24,6 +24,7 @@ vx = 0 #x velocity of player
 vy = 0 #y velocity of player
 keys = [False, False, False, False] #this list holds whether each key has been pressed
 isOnGround = False #this variable stops gravity from pulling you down more when on a platform
+health = 100
 
 #enemy variables
 #expos = 200
@@ -36,7 +37,7 @@ enemy3=[290, 530, 25]
 
 #------------------------------------------Function Definition-------------------------
 def enemyMove(enemyInfo):
-    print(enemyInfo)
+    #print(enemyInfo)
     enemyInfo[2] +=1
     if enemyInfo[2] <= 40:
         enemyInfo[0]+=1
@@ -47,13 +48,22 @@ def enemyMove(enemyInfo):
 #---------------------------------------------------------------------------------------
 
 
+def enemyCollide(enemyInfo, playerX, playerY):
+    if playerX+20>enemyInfo[0]: #right side of player
+        if playerX < enemyInfo[0]+20: #left side of player
+            if playerY < enemyInfo[1]+20:
+                if playerY+20 > enemyInfo[1]:
+                    return True
+    else:
+        return False
+
 #SOUND--------------------------------------------------------------------
 jump = pygame.mixer.Sound('jump.ogg')#load in sound effect
 music = pygame.mixer.music.load('music.ogg')#load in background music
 pygame.mixer.music.play(-1)#start background music
 #-------------------------------------------------------------------------
 
-while not gameover: #GAME LOOP############################################################
+while not gameover and health > 0: #GAME LOOP############################################################
     clock.tick(60) #FPS
     
     #Input Section------------------------------------------------------------
@@ -86,6 +96,19 @@ while not gameover: #GAME LOOP##################################################
     enemyMove(enemy1)
     enemyMove(enemy2)
     enemyMove(enemy3)
+    
+    #function calls for enemy collison
+    if enemyCollide(enemy1, xpos, ypos) == True:
+        print("Hit!")
+        health -= 3
+    if enemyCollide(enemy2, xpos, ypos) == True:
+        print("Hit!")
+        health -= 3
+    if enemyCollide(enemy3, xpos, ypos) == True:
+        print("Hit!")
+        health -= 3
+       
+       
           
     #physics section--------------------------------------------------------------------
     #RIGHT MOVEMENT
@@ -204,4 +227,6 @@ while not gameover: #GAME LOOP##################################################
     pygame.display.flip()#this actually puts the pixel on the screen
     
 #end game loop------------------------------------------------------------------------------
+if health <= 0:
+    print("Game over, you died")
 pygame.quit()
